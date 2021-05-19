@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.itssky.xuzhsAIS.dao.GuzjlMapper">  
+
+	<!-- 添加  -->
+	<insert id="add" parameterType="com.itssky.xuzhsAIS.entity.PageData">
+     	insert into B_HXJK_JIZGZJL 
+   		( b_vc_jizgzjlxh,B_VC_JIZID,B_DT_GUZKSSJ,B_VC_GUZDM ) 
+   		values 
+   		( replace(uuid(), '-', ''),#{B_VC_JIZID},now(),#{B_VC_GUZDM} )
+  	</insert>
+  	
+  	<!-- 编辑 -->
+  	<update id="updateGuzjl" parameterType="com.itssky.xuzhsAIS.entity.PageData">
+	    UPDATE B_HXJK_JIZGZJL 
+	    SET
+	    	B_DT_GUZJSSJ = now()
+	    WHERE B_DT_GUZKSSJ = 
+	    (
+	  		select
+	  			B_DT_GUZKSSJ
+	  		from
+	  		(
+		  		select
+		  			max(B_DT_GUZKSSJ) as B_DT_GUZKSSJ
+		  		from B_HXJK_JIZGZJL j
+		  		where j.B_VC_JIZID = (select g.B_VC_JIZYXGLXH from B_HXJK_JIZYXGL g where g.B_VC_JIZIP = #{IP} ) 
+	  		) as t_a	    	
+	    )
+  	</update>
+  	
+  	<!-- 编辑 -->
+  	<update id="updateJizzt" parameterType="com.itssky.xuzhsAIS.entity.PageData">
+	    UPDATE B_HXJK_JIZYXGL 
+	    SET 
+	    	B_NB_JIZZT = #{B_NB_JIZZT}
+	    WHERE B_VC_JIZIP = #{B_VC_JIZIP}
+  	</update>  	
+  	
+  	<!-- 查询 -->
+  	<select id="getJizIdByIP" parameterType="String" resultType="String">
+  		select g.B_VC_JIZYXGLXH from B_HXJK_JIZYXGL g where g.B_VC_JIZIP = #{IP}
+  	</select>
+  	
+  	<!-- 查询 -->
+  	<select id="getGuzStopTimeByIP" parameterType="String" resultType="com.itssky.xuzhsAIS.entity.PageData">
+  		select
+  			case when B_DT_GUZJSSJ is null then null
+  			else date_format(B_DT_GUZJSSJ,'%Y-%m-%d %H:%i:%s')
+  			end B_DT_GUZJSSJ,
+  			case when B_DT_GUZKSSJ is null then null
+  			else date_format(B_DT_GUZKSSJ,'%Y-%m-%d %H:%i:%s')
+  			end B_DT_GUZKSSJ,  
+  			B_VC_JIZID			
+  		from B_HXJK_JIZGZJL 
+  		where B_DT_GUZKSSJ = 
+  		(
+	  		select
+	  			max(B_DT_GUZKSSJ) 
+	  		from B_HXJK_JIZGZJL j
+	  		where j.B_VC_JIZID = (select g.B_VC_JIZYXGLXH from B_HXJK_JIZYXGL g where g.B_VC_JIZIP = #{IP} )  			
+  		)
+  		and B_VC_JIZID = (select g.B_VC_JIZYXGLXH from B_HXJK_JIZYXGL g where g.B_VC_JIZIP = #{IP})
+  	</select>
+  	
+  	<!-- 根据船舶mmsi获取船舶信息 -->
+  	<select id="getChuanbInfoByMmsi" parameterType="com.itssky.xuzhsAIS.entity.PageData" resultType="com.itssky.xuzhsAIS.entity.PageData">
+		select
+			t.*
+		from(
+			select 
+				a.CHUANBSBH,a.CHUANBDJH,a.CHUANBMC,a.CHUANBYWMC,
+			    a.CHUANBZL,
+			    '1' ISAIS
+			from xuz_hais.B_HXJK_CHUANBJBXX a
+			where a.CHUANBSBH is not null
+			and a.mmsibh = #{mmsi}
+		)t
+		limit 1
+  	</select>
+  	
+  	<!-- 根据获取的ais信息添加船舶历史数据  -->
+	<insert id="addChuanblswzByAis" parameterType="com.itssky.xuzhsAIS.entity.PageData">
+     	insert into VITSAIS.B_HXJK_CHUANBLSWZ 
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        	CHUANBGJGUID,
+            <if test="CHUANBSBH != null  and CHUANBSBH != ''">CHUANBSBH,</if>
+            <if test="CHUANBDJH != null  and CHUANBDJH != ''">CHUANBDJH,</if>
+            <if test="CHUANBMC != null  and CHUANBMC != ''">CHUANBMC,</if>
+            <if test="CHUANBYWMC != null  and CHUANBYWMC != ''">CHUANBYWMC,</if>
+            <if test="JINGD != null  and JINGD != ''">JINGD,</if>
+            <if test="WEID != null and WEID != ''">WEID,</if>
+            <if test="HANGX != null  ">HANGX,</if>
+            <if test="HANGS != null ">HANGS,</if>
+            DINGWSJ,
+            ISAIS,
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        	replace(uuid(), '-', ''),
+            <if test="CHUANBSBH != null  and CHUANBSBH != ''">#{CHUANBSBH},</if>
+            <if test="CHUANBDJH != null  and CHUANBDJH != ''">#{CHUANBDJH},</if>
+            <if test="CHUANBMC != null  and CHUANBMC != ''">#{CHUANBMC},</if>
+            <if test="CHUANBYWMC != null  and CHUANBYWMC != ''">#{CHUANBYWMC},</if>
+            <if test="JINGD != null  and JINGD != ''">#{JINGD},</if>
+            <if test="WEID != null and WEID != ''">#{WEID},</if>
+            <if test="HANGX != null ">#{HANGX},</if>
+            <if test="HANGS != null ">#{HANGS},</if>
+            now(),
+            '1',
+         </trim>
+  	</insert>
+  	
+  	<!-- 根据获取的ais信息添加船舶基本信息  -->
+	<insert id="addChuanbjbxxByAis" parameterType="com.itssky.xuzhsAIS.entity.PageData">
+     	insert into B_HXJK_CHUANBJBXX 
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        	chuanbguid,
+            <if test="CHUANBSBH != null  and CHUANBSBH != ''">CHUANBSBH,</if>
+            <if test="CHUANBMC != null  and CHUANBMC != ''">CHUANBMC,</if>
+            <if test="CHUANBYWMC != null  and CHUANBYWMC != ''">CHUANBYWMC,</if>
+            <if test="HUH != null  and HUH != ''">HUH,</if>
+            <if test="CHUANBZL != null and CHUANBZL != ''">CHUANBZL,</if>
+            <if test="MMSIBH != null  and MMSIBH != ''">MMSIBH,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        	replace(uuid(), '-', ''),
+            <if test="CHUANBSBH != null  and CHUANBSBH != ''">#{CHUANBSBH},</if>
+            <if test="CHUANBMC != null  and CHUANBMC != ''">#{CHUANBMC},</if>
+            <if test="CHUANBYWMC != null  and CHUANBYWMC != ''">#{CHUANBYWMC},</if>
+            <if test="HUH != null  and HUH != ''">#{HUH},</if>
+            <if test="CHUANBZL != null and CHUANBZL != ''">#{CHUANBZL},</if>
+            <if test="MMSIBH != null  and MMSIBH != ''">#{MMSIBH},</if>
+         </trim>
+  	</insert>
+  	
+</mapper>

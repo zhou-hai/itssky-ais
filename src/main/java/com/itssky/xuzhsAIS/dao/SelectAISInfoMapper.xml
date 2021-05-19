@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.itssky.xuzhsAIS.dao.SelectAISInfoMapper">  
+
+	<!-- 查询-->
+	<select id="getMubzByYuanz" parameterType="String" resultType="String" >
+		select
+			g.B_VC_MUBZ
+		from B_HXJK_AISDMZH g
+		where g.B_VC_YUANZ = #{B_VC_YUANZ}
+		and g.B_NB_SHIFYX = '0'
+	</select>
+	
+	<!-- 查询 -->
+	<select id="getBitsmByXiaoxId" parameterType="int" resultType="int" >
+		select
+			g.B_NB_BITSM
+		from B_HXJK_XIAOXSM g
+		where g.B_NB_XIAOXID = #{B_NB_XIAOXID}
+		and g.B_NB_ZHUANGT = '0'
+		order by g.B_NB_SHUNX
+	</select>	
+	
+	<!-- 查询-->
+	<select id="getBitsmByXiaoxIdAndMc" parameterType="com.itssky.xuzhsAIS.entity.PageData" resultType="int" >
+		select
+			g.B_NB_BITSM
+		from B_HXJK_XIAOXSM g
+		where g.B_NB_XIAOXID = #{B_NB_XIAOXID}
+		and g.B_VC_XIAOXMC LIKE CONCAT(CONCAT('%', #{B_VC_XIAOXMC}),'%')
+		and g.B_NB_ZHUANGT = '0'
+		order by g.B_NB_SHUNX
+	</select>	
+	
+	<!-- 查询 -->
+	<select id="getJizInfoList" resultType="com.itssky.xuzhsAIS.entity.PageData" >
+		select
+			g.B_VC_JIZIP,
+			g.B_NB_JIZDK,
+			B_NB_JIZAISDK
+		from B_HXJK_JIZYXGL g
+		where 1=1
+	</select>		
+	
+	<!-- 查询 -->
+	<select id="getYicJizInfoList" resultType="com.itssky.xuzhsAIS.entity.PageData" >
+		select
+			g.B_VC_JIZIP,
+			g.B_NB_JIZDK
+		from B_HXJK_JIZYXGL g
+		where 1=1
+		and g.B_NB_JIZZT = '1'
+	</select>			
+	
+</mapper>

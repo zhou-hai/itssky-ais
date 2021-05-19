@@ -1,0 +1,144 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.itssky</groupId>
+  <artifactId>ais</artifactId>
+  <packaging>jar</packaging>
+
+  <name>ais</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <start-class>com.itssky.xuzhsAIS.Execute</start-class>
+    <mysql.version>5.1.47</mysql.version>
+	<druid.version>1.1.9</druid.version>
+	<snakeyaml.version>1.23</snakeyaml.version>
+  </properties>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.9.RELEASE</version>
+  </parent>
+
+  <dependencies>
+     <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+         <groupId>org.mybatis.spring.boot</groupId>
+         <artifactId>mybatis-spring-boot-starter</artifactId>
+         <version>1.1.1</version>
+    </dependency>
+        <dependency>
+        <groupId>commons-dbcp</groupId>
+        <artifactId>commons-dbcp</artifactId>
+    </dependency>
+	<dependency>
+	    <groupId>tw.edu.ntu.csie</groupId>
+	    <artifactId>libsvm</artifactId>
+	    <version>3.17</version>
+	</dependency>
+	<dependency>
+    	<groupId>org.apache.poi</groupId>
+    	<artifactId>poi</artifactId>
+    	<version>3.9</version>
+	</dependency>
+	<dependency>
+    	<groupId>org.apache.poi</groupId>
+    	<artifactId>poi-ooxml</artifactId>
+    	<version>3.9</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+	<dependency>
+	    <groupId>commons-net</groupId>
+	    <artifactId>commons-net</artifactId>
+	    <version>3.1</version>
+	</dependency>
+	
+	<!-- 解码and编码器 -->
+	<!-- https://mvnrepository.com/artifact/org.msgpack/msgpack -->
+	<dependency>
+	    <groupId>org.msgpack</groupId>
+	    <artifactId>msgpack</artifactId>
+	    <version>0.6.12</version>
+	</dependency>
+	<!-- 引入netty依赖 -->
+	<dependency>
+	    <groupId>io.netty</groupId>
+	    <artifactId>netty-all</artifactId>
+	    <version>4.1.6.Final</version>
+	</dependency>
+	
+	<!-- Ais消息解析 -->
+	<dependency>
+	    <groupId>dk.tbsalling</groupId>
+	    <artifactId>aismessages</artifactId>
+	    <version>2.2.1</version>
+	</dependency>
+	
+	<!-- MySQL -->
+	<dependency>
+		<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+		<version>${mysql.version}</version>
+	</dependency>
+	<!-- druid数据库连接池 -->
+	<dependency>
+		<groupId>com.alibaba</groupId>
+		<artifactId>druid-spring-boot-starter</artifactId>
+		<version>${druid.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.yaml</groupId>
+		<artifactId>snakeyaml</artifactId>
+		<version>${snakeyaml.version}</version>
+	</dependency>
+  </dependencies>
+  
+   <build>  
+    <plugins>  
+        <plugin>  
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-maven-plugin</artifactId>  
+            <configuration>  
+                <fork>true</fork>  
+            </configuration>  
+        </plugin>  
+    </plugins>  
+    <resources>
+    	<resource>
+    		<directory>src/main/resource</directory>
+    		<includes>
+    			<include>**/*</include>
+    		</includes>
+    	</resource>
+    	<resource>
+    		<directory>src/main/java</directory>
+    		<includes>
+    			<include>**/*.xml</include>
+    		</includes>
+    	</resource>
+    </resources>
+    
+	 <defaultGoal>compile</defaultGoal>
+	<pluginManagement>
+	<plugins> 
+	<plugin> 
+	<groupId>org.apache.maven.plugins</groupId> 
+	<artifactId>maven-compiler-plugin</artifactId> 
+	<configuration> 
+	<source>1.7</source> 
+	<target>1.7</target> 
+	</configuration> 
+	</plugin>
+	</plugins>
+	</pluginManagement>   
+    
+	</build>  
+	
+   <version>1.0.0.10</version>
+</project>
